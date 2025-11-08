@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Carbon Credit Marketplace</title>
+<!--    <link rel="stylesheet" href="/style.css">-->
+    <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+</head>
+
+<body>
+<h1>🌱 Carbon Credit Marketplace</h1>
+<p>Buy, Sell, and Verify Carbon Credits using Blockchain & IPFS</p>
+
+<% if (user) { %>
+    <section id="profile">
+        <h2>User Profile</h2>
+        <p><strong>Name:</strong> <%= user.name %></p>
+        <p><strong>Email:</strong> <%= user.email %></p>
+
+        <% if (user.picture) { %>
+            <img src="<%= user.picture %>" alt="Profile" width="80">
+        <% } %>
+
+        <br>
+        <a href="/logout">Logout</a>
+    </section>
+<% } else { %>
+    <a href="/login">Login with Auth0</a>
+<% } %>
+
+<hr>
+
+<section id="connect">
+    <h2>1. Connect Wallet</h2>
+    <button id="connect">Connect MetaMask</button>
+    <p>Wallet Address: <span id="address">-----</span> </p>
+</section>
+
+<hr>
+
+<section id="upload">
+    <h3>Upload Carbon Credit Document</h3>
+    <input type="file" id="fileInput" name="file" accept=".pdf" />
+    <button id="uploadBtn">Upload to Pinata</button>
+
+    <p><strong>IPFS CID:</strong> <span id="cid">None</span></p>
+    <p><strong>View File:</strong> <a id="fileLink" target="_blank"></a></p>
+</section>
+<script>
+    // Handle upload button click
+    document.getElementById("uploadBtn").addEventListener("click", async () => {
+        const fileInput = document.getElementById("fileInput");
+        const file = fileInput.files[0];
+
+        if (!file) {
+            alert("Please select a file first!");
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append("file", file);
+
+        try {
+            const response = await fetch("/upload", {
+                method: "POST",
+                body: formData,
+            });
+
+            const result = await response.json();
+            console.log(result);
+
+            if (result.IpfsHash) {
+                const cid = result.IpfsHash;
+                document.getElementById("cid").textContent = cid;
+                document.getElementById("fileLink").href = `https://gateway.pinata.cloud/ipfs/${cid}`;
+                document.getElementById("fileLink").textContent = "View on IPFS";
+                alert("✅ File uploaded successfully!");
+            } else {
+                alert("❌ Upload failed. Check console.");
+            }
+        } catch (error) {
+            console.error(error);
+            alert("Error uploading file to Pinata.");
+        }
+    });
+</script>
+
+<hr>
+
+<section id="buy">
+    <h2>3. Buy Carbon Credits</h2>
+    <label>Amount (ETH):</label>
+    <input type="number" id="buyAmount" value="1.00" step="0.01" min="0">
+    <button id="buyButton">Buy Credits</button>
+    <p>Status: ____________________</p>
+</section>
+
+<hr>
+
+<section id="sell">
+    <h2>4. Sell Carbon Credits</h2>
+    <label>Amount (ETH):</label>
+    <input type="number" id="sellAmount" value="0.33" step="0.01" min="0">
+    <button id="sellButton">Sell Credits</button>
+    <p>Status: ____________________</p>
+</section>
+
+<hr>
+
+<footer>
+    <p>Powered by Polygon • IPFS • Pinata • Auth0</p>
+</footer>
+
+<script type="module" src="/connecting_meta.js"></script>
+</body>
+</html>
