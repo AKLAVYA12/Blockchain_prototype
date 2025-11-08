@@ -61,7 +61,6 @@ app.post("/upload", upload.single("file"), async (req, res) => {
         const formData = new FormData();
         formData.append("file", fileStream, req.file.originalname);
 
-        // ✅ Important: include form-data headers
         const headers = {
             Authorization: `Bearer ${process.env.PINATA_JWT}`,
             ...formData.getHeaders(),
@@ -76,10 +75,10 @@ app.post("/upload", upload.single("file"), async (req, res) => {
         const result = await response.json();
         fs.unlinkSync(req.file.path); // cleanup
 
-        console.log("✅ Uploaded to Pinata:", result);
+        console.log("Uploaded to Pinata:", result);
         res.json(result);
     } catch (error) {
-        console.error("❌ Upload error:", error);
+        console.error(" Upload error:", error);
         res.status(500).json({ error: "Failed to upload file to Pinata" });
     }
 });

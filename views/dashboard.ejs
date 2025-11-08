@@ -74,9 +74,9 @@
                 document.getElementById("cid").textContent = cid;
                 document.getElementById("fileLink").href = `https://gateway.pinata.cloud/ipfs/${cid}`;
                 document.getElementById("fileLink").textContent = "View on IPFS";
-                alert("✅ File uploaded successfully!");
+                alert(" File uploaded successfully!");
             } else {
-                alert("❌ Upload failed. Check console.");
+                alert(" Upload failed. Check console.");
             }
         } catch (error) {
             console.error(error);
