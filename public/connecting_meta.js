@@ -1,25 +1,37 @@
-
 window.addEventListener("load", () => {
     const wallet = localStorage.getItem("userWallet");
-    if (wallet) {
-        document.querySelector("#connect").innerText = `Connected: ${wallet}`;
-    } else {
-    document.getElementById("connect").addEventListener("click", async () => {
-        if (window.ethereum) {
-            try {
-                const accounts = await window.ethereum.request({
-                    method: "eth_requestAccounts",
-                });
-                const address = accounts[0];
+    const connect = document.getElementById("connect");
+    const recon = document.getElementById("reconnect");
 
-                localStorage.setItem("userWallet", address);
-                document.getElementById("address").textContent = address;
-            } catch (err) {
-                console.error(err);
-                alert("MetaMask connection failed");
-            }
-        } else {
+    const setAddress = (address) => {
+        const addressElement = document.getElementById("address");
+        if (addressElement) addressElement.textContent = address;
+    };
+
+    const connectWallet = async () => {
+        if (!window.ethereum) {
             alert("MetaMask not detected. Please install it.");
+            return;
         }
-    });}
+
+        try {
+            const accounts = await window.ethereum.request({
+                method: "eth_requestAccounts",
+            });
+            const address = accounts[0];
+            localStorage.setItem("userWallet", address);
+            setAddress(address);
+        } catch (err) {
+            console.error(err);
+            alert("MetaMask connection failed");
+        }
+    };
+
+    if (wallet) {
+        connect.innerText = `Connected: ${wallet}`;
+        recon.style.display = "inline-block";
+        recon.onclick = connectWallet;
+    } else {
+        connect.addEventListener("click", connectWallet);
+    }
 });

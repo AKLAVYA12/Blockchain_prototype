@@ -73,7 +73,7 @@ app.post("/upload", upload.single("file"), async (req, res) => {
         });
 
         const result = await response.json();
-        fs.unlinkSync(req.file.path); // cleanup
+        fs.unlinkSync(req.file.path);
 
         console.log("Uploaded to Pinata:", result);
         res.json(result);
